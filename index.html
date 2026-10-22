@@ -4,11 +4,6 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <title>Diarylab</title>
-<meta name="robots" content="noindex, nofollow">
-<meta name="theme-color" content="#c94576">
-<link rel="manifest" href="manifest.webmanifest">
-<link rel="icon" href="favicon.ico">
-<link rel="apple-touch-icon" href="icon-192.png">
 <meta name="claude:viewport-fit-sides" content="cover">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -1217,7 +1212,7 @@ function ltpHtml(){
     if(open&&!ev) b+='<tr class="trow"><td></td><td colspan="8"><textarea id="ta-'+pk+'-'+esc(r.id)+'" rows="'+Math.max(4,Math.min(12,tl.length+1))+'" aria-label="Lesson titles for '+esc(r.label)+'" placeholder="One lesson title per line">'+esc(tl.join('\n'))+'</textarea>'+
       '<div class="row2"><button class="btn primary" data-act="savetitles" data-p="'+pk+'" data-u="'+esc(r.id)+'">Save titles</button>'+(tl.length?'<button class="btn dng" data-act="cleartitles" data-p="'+pk+'" data-u="'+esc(r.id)+'">Clear</button>':'')+'</div></td></tr>';
   });
-  b+='</tbody></table></div><div class="row2 ttfoot"><button class="btn" data-act="ltpadd">+ Add unit</button><button class="btn" data-act="ltpaddev">+ Add event</button>'+(DEFPATHS&&DEFPATHS[pk]?'<button class="btn" data-act="ltprestore">Load Science LTP example</button>':'')+'<button class="btn dng" data-act="ltpclear" style="margin-left:auto">Delete LTP</button></div></div></div>';
+  b+='</tbody></table></div><div class="row2 ttfoot"><button class="btn" data-act="ltpadd">+ Add unit</button><button class="btn" data-act="ltpaddev">+ Add event</button>'+(DEFPATHS&&DEFPATHS[pk]?'<button class="btn" data-act="ltprestore">Load Science LTP example (all years)</button>':'')+'<button class="btn dng" data-act="ltpclear" style="margin-left:auto">Delete LTP</button></div></div></div>';
   return b;
 }
 
@@ -1489,7 +1484,7 @@ function render(){
   placeSheet(spotScroll); spotScroll=false;
   if(focusSheet){ focusSheet=false; var fx=document.getElementById('sh-note')||document.getElementById('sh-custom'); if(fx){ fx.focus({preventScroll:true}); try{ fx.setSelectionRange(fx.value.length,fx.value.length); }catch(_){} } }
 }
-var CONF={ltpdel:'Delete?',ltprestore:'Replace with example?',ltpclear:'Delete everything?',ttclear:'Clear all rows?',cldel:'Remove class?',cleartitles:'Clear names?',resetorder:'Reset order?',bkreset:'Erase everything?',delnote:'Remove note?'}, confArm=null;
+var CONF={ltpdel:'Delete?',ltprestore:'Replace all five years?',ltpclear:'Delete everything?',ttclear:'Clear all rows?',cldel:'Remove class?',cleartitles:'Clear names?',resetorder:'Reset order?',bkreset:'Erase everything?',delnote:'Remove note?'}, confArm=null;
 function confDisarm(){ if(confArm){ var el=confArm.el; if(el&&el.isConnected){ el.innerHTML=confArm.html; el.classList.remove('confirming'); } clearTimeout(confArm.tm); confArm=null; } }
 document.addEventListener('input',function(e){ if(ttm.open&&e.target.closest&&e.target.closest('.sheet')) ttm.dirty=true; });
 document.addEventListener('change',function(e){ if(ttm.open&&e.target.closest&&e.target.closest('.sheet')) ttm.dirty=true; });
@@ -1535,7 +1530,7 @@ document.addEventListener('click',function(e){
   else if(a==='ltpclose'){ ltpCloseAuto(); }
   else if(a==='ltpbg'){ if(e.target===t) ltpCloseAuto(); }
   else if(a==='ltptog'){ var tk=t.getAttribute('data-k'); if(openUnits[tk]) delete openUnits[tk]; else openUnits[tk]=1; render(); }
-  else if(a==='ltprestore'){ if(DEFPATHS&&DEFPATHS[uyr]){ ltpDraft[uyr]=draftOf(JSON.parse(JSON.stringify(DEFPATHS[uyr]))); ltpDirty=true; var tpk=pkey(uyr); if(DEFTITLES[tpk]){ TI[tpk]=JSON.parse(JSON.stringify(DEFTITLES[tpk])); persistTitles(tpk,{units:JSON.parse(JSON.stringify(TI[tpk]))}); } ltpMsg='Example loaded.'; if(ltpSave(uyr)) ltpMsg='Example loaded, with lesson names, and saved.'; } render(); }
+  else if(a==='ltprestore'){ var yrs=['Y7','Y8','Y9','Y10','Y11'], okAll=true; yrs.forEach(function(pk){ if(!DEFPATHS[pk]) return; ltpDraft[pk]=draftOf(JSON.parse(JSON.stringify(DEFPATHS[pk]))); if(DEFTITLES[pk]){ TI[pk]=JSON.parse(JSON.stringify(DEFTITLES[pk])); persistTitles(pk,{units:JSON.parse(JSON.stringify(TI[pk]))}); } if(!ltpSave(pk)) okAll=false; }); ltpMsg=okAll?'Science LTP example loaded for all five year groups, with lesson names, and saved.':'Could not load part of the example.'; render(); }
   else if(a==='ltpclear'){ ltpDraft[uyr]=[]; ltpDirty=true; ltpMsg='LTP deleted. Add your own units, then press Save LTP.'; render(); }
   else if(a==='ttsave'){ttSave();}
   else if(a==='ttreset'){ ttm.ed=null; applyConfig(DEFCFG,false); if(db&&exists.cfg){ db.doc('config/main').delete().catch(function(){}); exists.cfg=false; } ttm.open=false; view='today'; render(); }
@@ -1771,6 +1766,5 @@ function ttOpenFirst(){ var b=document.getElementById('h-timetable'); if(b) b.cl
 })();
 </script>
 
-<script>if('serviceWorker' in navigator && location.protocol!=='file:'){ window.addEventListener('load',function(){ navigator.serviceWorker.register('sw.js').catch(function(){}); }); }</script>
 </body>
 </html>
