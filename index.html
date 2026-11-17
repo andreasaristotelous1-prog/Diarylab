@@ -5,11 +5,6 @@
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg viewBox=%220 0 96 96%22 xmlns=%22http://www.w3.org/2000/svg%22%3E%3Crect x=%224%22 y=%224%22 width=%2288%22 height=%2288%22 rx=%2222%22 fill=%22%23c94576%22/%3E%3Cpath d=%22M34 28 V68 H46 Q66 68 66 48 Q66 28 46 28 Z%22 fill=%22none%22 stroke=%22%23fcebf2%22 stroke-width=%2211%22 stroke-linejoin=%22round%22 stroke-linecap=%22round%22 transform=%22translate%28-6 8%29%22/%3E%3Ccircle cx=%2270%22 cy=%2224%22 r=%226%22 fill=%22%23fcebf2%22/%3E%3Ccircle cx=%2279%22 cy=%2238%22 r=%224%22 fill=%22%23fcebf2%22/%3E%3Ccircle cx=%2276%22 cy=%2214%22 r=%223%22 fill=%22%23fcebf2%22/%3E%3C/svg%3E">
 <title>Diarylab</title>
-<meta name="robots" content="noindex, nofollow">
-<meta name="theme-color" content="#c94576">
-<link rel="manifest" href="manifest.webmanifest">
-<link rel="icon" href="favicon.ico">
-<link rel="apple-touch-icon" href="icon-192.png">
 <meta name="claude:viewport-fit-sides" content="cover">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -1717,7 +1712,18 @@ document.addEventListener('toggle',function(e){
   if(d.open) openUnits[k]=1; else delete openUnits[k];
 },true);
 
-setInterval(function(){ if(view==='today' && dsel===TODAY && openSlot===null) render(); },60000);
+function dateTick(){
+  var nt=iso(new Date()); if(nt===TODAY) return;
+  var oldW=defaultWeek(), oldT=TODAY, wasDay=(dsel===(isSchoolDay(oldT)?oldT:stepDay(oldT,1))), wasWk=(wsel===oldW);
+  TODAY=nt;
+  if(wasDay) dsel=isSchoolDay(TODAY)?TODAY:stepDay(TODAY,1);
+  if(wasWk) wsel=defaultWeek();
+  if(openSlot===null && !document.querySelector('.sheetbg')) render();
+}
+setInterval(function(){ dateTick(); if(view==='today' && dsel===TODAY && openSlot===null) render(); },60000);
+document.addEventListener('visibilitychange',function(){ if(!document.hidden) dateTick(); });
+window.addEventListener('focus',dateTick);
+window.addEventListener('pageshow',dateTick);
 /* ---------- start ---------- */
 
 var LSKEY='lessonlab-tracker-v1';
@@ -1786,6 +1792,5 @@ function ttOpenFirst(){ var b=document.getElementById('h-timetable'); if(b) b.cl
 })();
 </script>
 
-<script>if('serviceWorker' in navigator && location.protocol!=='file:'){ window.addEventListener('load',function(){ navigator.serviceWorker.register('sw.js').catch(function(){}); }); }</script>
 </body>
 </html>
