@@ -1594,7 +1594,7 @@ document.addEventListener('click',function(e){
   else if(a==='set'){
     var s=t.getAttribute('data-s'); openSlot=null;
     var cid1=t.getAttribute('data-c'), d1=t.getAttribute('data-d'), n1=Number(t.getAttribute('data-n'))||0, old=S[cid1].slots[d1];
-    var sl1=M[cid1].slots.filter(function(x){return x.date===d1})[0], nonUnit=sl1&&(!sl1.unit||sl1.unit.kind!=='unit');
+    var sl1=M[cid1].slots.filter(function(x){return x.date===d1})[0], nonUnit=sl1&&(!sl1.unit||sl1.unit.kind!=='unit')&&!(old&&old.s==='p');
     if(s==='t'&&n1===1&&sl1&&sl1.s==='e'&&sl1.x&&sl1.x.w==='pl'){ setSlot(cid1,d1,{s:'e',n:0,r:sl1.x.r||'',w:''}); return; }
     if(s==='t'&&n1===1&&nonUnit){ setSlot(cid1,d1,{s:'e',n:0,r:(sl1.unit&&sl1.unit.label)||'',w:'np'}); return; }
     var cust=old&&old.s==='e'&&old.r&&sl1&&!sl1.implicit&&old.w!=='np'&&!/^(Assessment|Revision|Assessment or revision)$/i.test(old.r)?old.r:'';
